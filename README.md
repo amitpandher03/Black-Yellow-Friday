@@ -2,7 +2,6 @@
 
 A modern e-commerce platform built with Laravel, featuring a sleek black and yellow theme, designed specifically for Black Friday sales and special promotions.
 
-![Black Friday App Screenshot](screenshot.png)
 
 ## ✨ Features
 
@@ -146,17 +145,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## 💬 Support
 
 For support, email `support@example.com` or join our Slack channel.
-
-## 📸 Screenshots
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Product Listing
-![Product Listing](screenshots/products.png)
-
-### Shopping Cart
-![Shopping Cart](screenshots/cart.png)
 
 ---
 
