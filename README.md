@@ -149,7 +149,7 @@ For support, email `support@example.com` or join our Slack channel.
 ---
 
 <div align="center">
-  Made with ❤️ by <strong>Your Name</strong><br>
+  Made with ❤️ by <strong>Amit</strong><br>
   <sup>© 2024 Black Friday E-commerce. All rights reserved.</sup>
 </div>
 
