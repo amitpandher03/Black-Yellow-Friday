@@ -1,4 +1,4 @@
-<div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow duration-300 border border-primary/20 h-full">
+<div class="card bg-base-100 shadow-xl hover:shadow-2xl hover:bg-primary/20 transition-shadow duration-300 border border-primary/20 h-full">
     <figure class="relative px-4 pt-4">
         <img src="{{ $product->image }}" alt="Product" 
              class="rounded-xl w-full h-48 object-cover" />

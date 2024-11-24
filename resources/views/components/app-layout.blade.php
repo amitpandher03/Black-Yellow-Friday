@@ -8,6 +8,16 @@
 </head>
 <body data-theme="blackfriday">
     <x-navbar />
+    @if (session('success'))
+        <x-alert type="success" :message="session('success')" />
+    @elseif (session('error'))
+        <x-alert type="error" :message="session('error')" />
+    @elseif (session('warning'))
+        <x-alert type="warning" :message="session('warning')" />
+    @elseif (session('info'))
+        <x-alert type="info" :message="session('info')" />
+    @endif
+    
     <main>
         {{ $slot }}
     </main>

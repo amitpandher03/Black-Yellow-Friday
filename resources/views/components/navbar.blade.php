@@ -11,7 +11,7 @@
             <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                 <li><a href="{{ route('home') }}" class="text-primary">Home</a></li>
                 <li><a href="{{ route('products.index') }}" class="text-primary">Products</a></li>
-                <li><a href="#" class="text-primary">Deals</a></li>
+                <li><a href="{{ route('deals.index') }}" class="text-primary">Deals</a></li>
             </ul>
         </div>
         <a href="{{ route('home') }}" class="btn btn-ghost text-primary text-xl">BlackFriday</a>
@@ -22,7 +22,7 @@
         <ul class="menu menu-horizontal px-1">
             <li><a href="{{ route('home') }}" class="text-primary">Home</a></li>
             <li><a href="{{ route('products.index') }}" class="text-primary">Products</a></li>
-            <li><a href="#" class="text-primary">Deals</a></li>
+            <li><a href="{{ route('deals.index') }}" class="text-primary">Deals</a></li>
         </ul>
     </div>
 
@@ -76,8 +76,7 @@
             </div>
             <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
                 @auth
-                    <li><a class="text-primary">Profile</a></li>
-                    <li><a class="text-primary">Settings</a></li>
+                    <li><a href="{{ route('profile.index') }}" class="text-primary">Profile</a></li>
                     <li>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

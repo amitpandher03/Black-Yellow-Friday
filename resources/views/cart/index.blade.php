@@ -9,12 +9,6 @@
             </a>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success mb-6">
-                {{ session('success') }}
-            </div>
-        @endif
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Cart Items -->
             <div class="lg:col-span-2 space-y-4">

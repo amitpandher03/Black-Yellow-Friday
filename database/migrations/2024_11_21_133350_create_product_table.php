@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->foreignId('category_id')->constrained('categories');
             $table->integer('stock');
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });
     }
