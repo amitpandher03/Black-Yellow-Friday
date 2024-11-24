@@ -11,10 +11,47 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::query()->latest()->paginate(12);
-        return view('products.index', compact('products'));
+        $query = Product::with(['category', 'user']);
+
+        // Category Filter
+        if ($request->category && $request->category !== 'All Categories') {
+            $query->whereHas('category', function($q) use ($request) {
+                $q->where('name', $request->category);
+            });
+        }
+
+        // Search from either navbar or product page
+        if ($request->search) {
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                  ->orWhere('description', 'like', "%{$request->search}%");
+            });
+        }
+
+        // Sorting
+        switch ($request->sort) {
+            case 'Price: Low to High':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'Price: High to Low':
+                $query->orderBy('price', 'desc');
+                break;
+            case 'Name: A to Z':
+                $query->orderBy('name', 'asc');
+                break;
+            default:
+                $query->latest();
+        }
+
+        $products = $query->paginate(9);
+        $categories = Category::all();
+
+        // If search came from navbar, scroll to products section
+        $fromNavbar = $request->has('search') && !$request->has('category') && !$request->has('sort');
+
+        return view('products.index', compact('products', 'categories', 'fromNavbar'));
     }
 
     /**
