@@ -2,7 +2,8 @@
     @foreach ($products as $product)
     <div class="card bg-base-100 shadow-xl hover:shadow-2xl hover:bg-primary/10 transition-shadow duration-300 border border-primary/20">
         <figure class="relative px-4 pt-4">
-            <img src="{{ $product->image }}" alt="Product" 
+            <img src="{{ $product->image ? Storage::url($product->image) : 'https://placehold.co/600x400' }}" 
+                 alt="{{ $product->name }}" 
                  class="rounded-xl w-full h-48 object-cover" />
             {{-- Category Badge --}}
             <div class="absolute top-6 right-6">
@@ -14,12 +15,18 @@
             <div class="flex items-center gap-2 my-1">
                 <div class="rating rating-sm">
                     @for($i = 1; $i <= 5; $i++)
-                        <input type="radio" name="rating-{{ $product }}" 
+                        <input type="radio" name="rating-{{ $product->id }}" 
                             class="mask mask-star-2 bg-primary" 
-                            @checked($i == 4) disabled />
+                            @checked($i <=  round($product->averageRating())) disabled />
                     @endfor
                 </div>
-                <span class="text-sm text-gray-400">(4.0)</span>
+                <span class="text-sm text-gray-400">
+                    @if($product->reviews->count() > 0)
+                        ({{ number_format($product->averageRating(), 1) }})
+                    @else
+                        (No reviews)
+                    @endif
+                </span>
             </div>
             <p class="text-gray-400 text-sm line-clamp-2">
                 {{ $product->description }}

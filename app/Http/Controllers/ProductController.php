@@ -16,14 +16,12 @@ class ProductController extends Controller
         $query = Product::with(['category', 'user']);
 
         // Category Filter
-        if ($request->category && $request->category !== 'All Categories') {
-            $query->whereHas('category', function($q) use ($request) {
-                $q->where('name', $request->category);
-            });
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
         }
 
-        // Search from either navbar or product page
-        if ($request->search) {
+        // Search
+        if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
                   ->orWhere('description', 'like', "%{$request->search}%");
@@ -32,13 +30,13 @@ class ProductController extends Controller
 
         // Sorting
         switch ($request->sort) {
-            case 'Price: Low to High':
+            case 'price_asc':
                 $query->orderBy('price', 'asc');
                 break;
-            case 'Price: High to Low':
+            case 'price_desc':
                 $query->orderBy('price', 'desc');
                 break;
-            case 'Name: A to Z':
+            case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
             default:
@@ -48,10 +46,7 @@ class ProductController extends Controller
         $products = $query->paginate(9);
         $categories = Category::all();
 
-        // If search came from navbar, scroll to products section
-        $fromNavbar = $request->has('search') && !$request->has('category') && !$request->has('sort');
-
-        return view('products.index', compact('products', 'categories', 'fromNavbar'));
+        return view('products.index', compact('products', 'categories'));
     }
 
     /**
@@ -68,8 +63,40 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $product = Product::create($request->all());
-        return redirect()->route('products.index');
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'is_featured' => 'nullable|boolean'
+        ]);
+
+        // Calculate discounted price if discount percentage is provided
+        if (!empty($validated['discount_percentage'])) {
+            $validated['discounted_price'] = $validated['price'] * (1 - $validated['discount_percentage'] / 100);
+        }
+
+        // Handle image upload
+        if ($request->hasFile('images')) {
+            $images = [];
+            foreach ($request->file('images') as $imageFile) {
+                $path = $imageFile->store('products', 'public');
+                $images[] = $path;
+            }
+            $validated['image'] = $images[0]; // Set the first image as the main image
+        }
+
+        // Set default stock value
+        $validated['stock'] = 0; // Or any default value you prefer
+        $validated['user_id'] = auth()->id();
+
+        $product = Product::create($validated);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product created successfully');
     }
 
     /**

@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->decimal('price', 8, 2);
             $table->text('description');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->foreignId('category_id')->constrained('categories');
-            $table->integer('stock');
+            $table->integer('stock')->default(0);
             $table->boolean('is_featured')->default(false);
             $table->timestamps();
         });

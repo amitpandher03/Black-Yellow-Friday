@@ -105,6 +105,7 @@
                 <div class="form-control">
                     <label class="label">
                         <span class="label-text text-primary">Product Images</span>
+                        <span class="label-text-alt text-gray-400">(First image will be the main product image)</span>
                     </label>
                     <input type="file" 
                            name="images[]" 
@@ -112,7 +113,7 @@
                            accept="image/*"
                            class="file-input file-input-bordered w-full @error('images') file-input-error @enderror" 
                            required />
-                    <div class="mt-2 grid grid-cols-3 gap-4">
+                    <div class="mt-2 grid grid-cols-3 gap-4" id="imagePreviewContainer">
                         {{-- Preview images will be inserted here by JavaScript --}}
                     </div>
                 </div>
