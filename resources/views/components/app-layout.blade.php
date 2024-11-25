@@ -7,16 +7,25 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body data-theme="blackfriday">
-    <x-navbar />
-    @if (session('success'))
-        <x-alert type="success" :message="session('success')" />
-    @elseif (session('error'))
-        <x-alert type="error" :message="session('error')" />
-    @elseif (session('warning'))
-        <x-alert type="warning" :message="session('warning')" />
-    @elseif (session('info'))
-        <x-alert type="info" :message="session('info')" />
+
+    @if (session()->has('success'))
+        <div data-flash-message="{{ session('success') }}" style="display: none;"></div>
     @endif
+   
+    @if (session()->has('error'))
+        <div data-flash-message="{{ session('error') }}" style="display: none;"></div>
+    @endif
+   
+    @if (session()->has('warning'))
+        <div data-flash-message="{{ session('warning') }}" style="display: none;"></div>
+    @endif
+   
+    @if (session()->has('info'))
+        <div data-flash-message="{{ session('info') }}" style="display: none;"></div>
+    @endif
+
+
+    <x-navbar />
     
     <main>
         {{ $slot }}

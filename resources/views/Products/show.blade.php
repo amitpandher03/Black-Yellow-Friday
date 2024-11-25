@@ -15,7 +15,7 @@
                 <div class="card bg-base-100 shadow-xl">
                     @if ($product->image)
                         <figure class="px-4 pt-4">
-                            <img src="{{ $product->image }}" alt="Product" class="rounded-xl" />
+                            <img src="{{ Storage::url($product->image) }}" alt="Product" class="rounded-xl" />
                         </figure>
                     @else
                         <figure class="px-4 pt-4">

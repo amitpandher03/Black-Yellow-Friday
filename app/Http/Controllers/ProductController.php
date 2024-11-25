@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller 
 {
@@ -86,14 +87,15 @@ class ProductController extends Controller
                 $path = $imageFile->store('products', 'public');
                 $images[] = $path;
             }
-            $validated['image'] = $images[0]; // Set the first image as the main image
+            $validated['image'] = $images[0];
         }
 
         // Set default stock value
-        $validated['stock'] = 0; // Or any default value you prefer
-        $validated['user_id'] = auth()->id();
+        $validated['stock'] = 100; 
 
         $product = Product::create($validated);
+        $product->user_id = Auth::id();
+        $product->save();
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully');

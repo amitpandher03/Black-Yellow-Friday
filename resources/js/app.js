@@ -1,46 +1,62 @@
 import './bootstrap';
 import Swal from 'sweetalert2'
 
+// Combined notification handler for both Livewire and Laravel session flash messages
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle Laravel flash messages
+    const flashMessage = document.querySelector('[data-flash-message]');
+    if (flashMessage) {
+        const message = flashMessage.dataset.flashMessage;
+        if (message) {
+            showNotification(message);
+        }
+    }
+});
+
 // Livewire notification handler
 document.addEventListener('livewire:initialized', () => {
-    
     Livewire.on('notify', (message) => {
-        const notificationMessage = Array.isArray(message) ? message[0] : message;
-        
-        Swal.fire({
-            icon: 'success',
-            title: notificationMessage,
-            toast: true,
-            position: 'top-right',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            background: '#000000',          // base-100 color
-            color: '#FFD700',              // primary color for text
-            iconColor: '#FFD700',          // primary/success color for icon
-            customClass: {
-                popup: 'colored-toast',
-                title: 'text-sm font-semibold',
-                timerProgressBar: 'bg-[#FFA500]' // secondary color for progress bar
-            },
-            showClass: {
-                popup: 'animate__animated animate__fadeInRight'
-            },
-            hideClass: {
-                popup: 'animate__animated animate__fadeOutRight'
-            },
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer)
-                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                // Style the progress bar
-                const progressBar = toast.querySelector('.swal2-timer-progress-bar');
-                if (progressBar) {
-                    progressBar.style.backgroundColor = '#FFA500'; // secondary color
-                }
-            }
-        });
+        showNotification(message);
     });
 });
+
+// Shared notification function
+function showNotification(message) {
+    const notificationMessage = Array.isArray(message) ? message[0] : message;
+    
+    Swal.fire({
+        icon: notificationMessage.includes('error') ? 'error' : 'success',
+        icon: 'success',
+        title: notificationMessage,
+        toast: true,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#000000',
+        color: '#FFD700',
+        iconColor: '#FFD700',
+        customClass: {
+            popup: 'colored-toast',
+            title: 'text-sm font-semibold',
+            timerProgressBar: 'bg-[#FFA500]'
+        },
+        showClass: {
+            popup: 'animate__animated animate__fadeInRight'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutRight'
+        },
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+            const progressBar = toast.querySelector('.swal2-timer-progress-bar');
+            if (progressBar) {
+                progressBar.style.backgroundColor = '#FFA500';
+            }
+        }
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     // Product Form Handling
