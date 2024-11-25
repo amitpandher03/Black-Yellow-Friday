@@ -15,7 +15,7 @@
                 @forelse($cartItems as $item)
                     <div class="card bg-base-100 shadow-xl">
                         <div class="card-body flex flex-row items-center">
-                            <img src="{{ $item->product->image }}" 
+                            <img src="{{ $item->product->image ? Storage::url($item->product->image) : 'https://placehold.co/400x400' }}" 
                                  class="w-24 h-24 object-cover rounded-xl" />
                             <div class="flex-1 ml-4">
                                 <h3 class="card-title text-primary">{{ $item->product->name }}</h3>

@@ -153,12 +153,22 @@
                                             @checked($i == 5)/>
                                     @endfor
                                 </div>
+                                @error('rating')
+                                    <label class="label">
+                                        <span class="label-text-alt text-error">{{ $message }}</span>
+                                    </label>
+                                @enderror
                             </div>
 
                             <div class="form-control mb-4">
                                 <textarea name="comment" rows="3" 
-                                    class="textarea textarea-bordered" 
-                                    placeholder="Share your thoughts about this product..."></textarea>
+                                    class="textarea textarea-bordered @error('comment') textarea-error @enderror" 
+                                    placeholder="Share your thoughts about this product..." required>{{ old('comment') }}</textarea>
+                                @error('comment')
+                                    <label class="label">
+                                        <span class="label-text-alt text-error">{{ $message }}</span>
+                                    </label>
+                                @enderror
                             </div>
 
                             <button type="submit" class="btn btn-primary">
