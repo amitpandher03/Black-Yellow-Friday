@@ -12,7 +12,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {{-- Product Images - Enhanced card styling --}}
             <div class="space-y-6">
-                <div class="card h-[600px] w-full bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
+                <div class="card h-full w-full bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
                     @if(Storage::exists($product->image))
                         <img src="{{ Storage::url($product->image) }}" 
                             class="w-full h-full object-contain transform hover:scale-110 transition duration-700 ease-in-out" />
@@ -46,13 +46,15 @@
                         <div class="badge badge-primary badge-lg px-4 py-3 font-medium">{{ $product->category->name }}</div>
                         <div class="flex items-center gap-3">
                             <div class="rating rating-md">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <input type="radio" name="rating-2" 
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <input type="radio" name="rating-{{ $product->name }}" 
                                         class="mask mask-star-2 bg-primary" 
-                                        @checked($i == 4) disabled />
+                                        @checked($i == $product->averageRating()) disabled />
                                 @endfor
                             </div>
-                            <span class="text-gray-600 font-semibold">(4.0)</span>
+                            <span class="text-gray-600 font-semibold">
+                                ({{ number_format($product->averageRating(), 1) }})
+                            </span>
                         </div>
                     </div>
                 </div>
