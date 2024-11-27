@@ -12,7 +12,7 @@ class CartController extends Controller
     {
         $cartItems = auth()->user()->cart()->with('product')->get();
         $subtotal = $cartItems->sum(function($item) {
-            return $item->product->price * $item->quantity;
+            return $item->product->discounted_price * $item->quantity;
         });
         
         return view('cart.index', compact('cartItems', 'subtotal'));

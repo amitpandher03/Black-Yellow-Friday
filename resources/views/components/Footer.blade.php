@@ -31,20 +31,25 @@
             <div class="space-y-4">
                 <h4 class="text-primary font-semibold">Quick Links</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Home</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Shop</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Categories</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Flash Deals</a></li>
+                    <li><a href="{{ route('home') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Home</a></li>
+                    <li><a href="{{ route('products.index') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Shop</a></li>
+                    <li><a href="{{ route('deals.index') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Deals</a></li>
+                    @auth
+                        <li><a href="{{ route('wishlist.index') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Wishlist</a></li>
+                        <li><a href="{{ route('cart.index') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Cart</a></li>
+                    @endauth
                 </ul>
             </div>
 
             <div class="space-y-4">
-                <h4 class="text-primary font-semibold">Customer Service</h4>
+                <h4 class="text-primary font-semibold">Account</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Contact Us</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Shipping Policy</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">Returns</a></li>
-                    <li><a href="#" class="text-gray-400 hover:text-primary text-sm transition-colors">FAQs</a></li>
+                    @auth
+                        <li><a href="{{ route('profile.index') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">My Profile</a></li>
+                    @else
+                        <li><a href="{{ route('login') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Login</a></li>
+                        <li><a href="{{ route('register') }}" class="text-gray-400 hover:text-primary text-sm transition-colors">Register</a></li>
+                    @endauth
                 </ul>
             </div>
 

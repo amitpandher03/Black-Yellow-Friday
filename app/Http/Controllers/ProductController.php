@@ -15,7 +15,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $query = Product::with(['category', 'user']);
-
+        
         // Category Filter
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
@@ -69,8 +69,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'images' => 'required|array',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'is_featured' => 'nullable|boolean'
         ]);
@@ -80,14 +79,9 @@ class ProductController extends Controller
             $validated['discounted_price'] = $validated['price'] * (1 - $validated['discount_percentage'] / 100);
         }
 
-        // Handle image upload
-        if ($request->hasFile('images')) {
-            $images = [];
-            foreach ($request->file('images') as $imageFile) {
-                $path = $imageFile->store('products', 'public');
-                $images[] = $path;
-            }
-            $validated['image'] = $images[0];
+        // Handle single image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
         }
 
         // Set default stock value
@@ -129,13 +123,17 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'images' => 'nullable|array',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discounted_price' => 'nullable|numeric|min:0',
         ]);
+
+        // Handle single image upload
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        }
 
         $product->update($validated);
 

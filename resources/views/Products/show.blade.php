@@ -1,64 +1,59 @@
 <x-app-layout>
-    <div class="container mx-auto px-4 py-8">
-        {{-- Breadcrumbs --}}
-        <div class="text-sm breadcrumbs mb-6">
-            <ul>
-                <li><a href="{{ route('products.index') }}" class="text-primary">Products</a></li>
-                <li>{{ $product->name }}</li>
+    <div class="container mx-auto px-4 py-12 max-w-7xl">
+        {{-- Breadcrumbs - Enhanced with better spacing and visual separation --}}
+        <div class="text-sm breadcrumbs mb-12">
+            <ul class="flex items-center space-x-2">
+                <li><a href="{{ route('products.index') }}" class="text-primary hover:text-primary-focus transition-colors duration-200">Products</a></li>
+                <li class="flex items-center before:content-['/'] before:mx-2 before:text-gray-400">{{ $product->name }}</li>
             </ul>
         </div>
 
-        {{-- Product Details --}}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {{-- Product Images --}}
-            <div class="space-y-4">
-                <div class="card bg-base-100 shadow-xl">
-                    @if ($product->image)
-                        <figure class="px-4 pt-4">
-                            <img src="{{ Storage::url($product->image) }}" alt="Product" class="rounded-xl" />
-                        </figure>
+        {{-- Product Details - Improved grid layout --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {{-- Product Images - Enhanced card styling --}}
+            <div class="space-y-6">
+                <div class="card h-[600px] w-full bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
+                    @if(Storage::exists($product->image))
+                        <img src="{{ Storage::url($product->image) }}" 
+                            class="w-full h-full object-contain transform hover:scale-110 transition duration-700 ease-in-out" />
                     @else
-                        <figure class="px-4 pt-4">
-                            <img src="https://placehold.co/600x400" alt="Product" class="rounded-xl" />
-                        </figure>
-                    @endif
-                </div>
-                <div class="grid grid-cols-4 gap-4">
-                    @if ($product->images && count($product->images) > 0)
-                        @foreach ($product->images as $image)
-                            <img src="{{ asset('storage/' . $image) }}" alt="Thumbnail" class="rounded-lg cursor-pointer hover:ring-2 ring-primary" />
-                        @endforeach
-                    @else
-                        @for ($i = 0; $i < 4; $i++)
-                            <img src="https://placehold.co/150x150" alt="Thumbnail" class="rounded-lg cursor-pointer hover:ring-2 ring-primary" />
-                        @endfor
+                        <img src="{{  $product->image  }}" 
+                            class="w-full h-full object-contain transform hover:scale-110 transition duration-700 ease-in-out" />
                     @endif
                 </div>
             </div>
 
-            {{-- Product Info --}}
-            <div class="space-y-6">
-                <div>
-                    <h1 class="text-4xl font-bold mb-2">{{ $product->name }}</h1>
-                    {{-- Creator Info --}}
-                    <div class="flex items-center gap-2 text-gray-500 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span>Created by {{ $product->user->name }}</span>
+            {{-- Product Info - Enhanced spacing and typography --}}
+            <div class="space-y-10">
+                {{-- Header Section --}}
+                <div class="space-y-6">
+                    <h1 class="text-6xl font-bold text-base-content tracking-tight">{{ $product->name }}</h1>
+                    
+                    {{-- Creator Info - Improved visual hierarchy --}}
+                    <div class="flex items-center gap-4 text-gray-600">
+                        <div class="avatar">
+                            <div class="w-10 h-10 rounded-full ring-2 ring-primary ring-offset-base-100 ring-offset-2">
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($product->user->name) }}" />
+                            </div>
+                        </div>
+                        <span class="font-semibold">{{ $product->user->name }}</span>
                         <span class="text-gray-400">•</span>
                         <span class="text-gray-400">{{ $product->created_at->diffForHumans() }}</span>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <div class="badge badge-primary">{{ $product->category->name }}</div>
-                        <div class="rating rating-sm">
-                            @for($i = 1; $i <= 5; $i++)
-                                <input type="radio" name="rating-2" 
-                                    class="mask mask-star-2 bg-primary" 
-                                    @checked($i == 4) disabled />
-                            @endfor
+
+                    {{-- Category and Rating - Enhanced badges --}}
+                    <div class="flex items-center gap-8">
+                        <div class="badge badge-primary badge-lg px-4 py-3 font-medium">{{ $product->category->name }}</div>
+                        <div class="flex items-center gap-3">
+                            <div class="rating rating-md">
+                                @for($i = 1; $i <= 5; $i++)
+                                    <input type="radio" name="rating-2" 
+                                        class="mask mask-star-2 bg-primary" 
+                                        @checked($i == 4) disabled />
+                                @endfor
+                            </div>
+                            <span class="text-gray-600 font-semibold">(4.0)</span>
                         </div>
-                        <span class="text-gray-400">(4.0)</span>
                     </div>
                 </div>
 
