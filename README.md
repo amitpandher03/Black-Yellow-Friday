@@ -15,15 +15,6 @@ A modern e-commerce platform built with Laravel, featuring a sleek black and yel
 - Secure checkout process 💳
 - Email notifications 📧
 
-### 🔧 Admin Features
-- Product management 📊
-- Category management 🏷️
-- Price and discount management 💰
-- Image upload and management 📸
-- Sales analytics 📈
-- User management 👥
-- Promotion management 🎯
-
 ## 🚀 Tech Stack
 
 - **Framework:** Laravel 10.x
@@ -31,7 +22,7 @@ A modern e-commerce platform built with Laravel, featuring a sleek black and yel
   - 🎨 Blade Templates
   - 💅 TailwindCSS
   - 🎯 DaisyUI
-  - ⚡ Alpine.js
+  - ⚡ SweetAlert2
 - **Authentication:** 🔐 Laravel Fortify
 - **Database:** 📦 MySQL
 - **File Storage:** 💾 Laravel Storage
@@ -108,9 +99,14 @@ php artisan serve
  ┃ ┗ 📂 Models
  ┣ 📂 resources
  ┃ ┣ 📂 views
- ┃ ┃ ┣ 📂 auth
+ ┃ ┃ ┣ 📂 cart
  ┃ ┃ ┣ 📂 components
- ┃ ┃ ┗ 📂 products
+ ┃ ┃ ┣ 📂 deals
+ ┃ ┃ ┣ 📂 livewire
+ ┃ ┃ ┣ 📂 products
+ ┃ ┃ ┣ 📂 profile
+ ┃ ┃ ┣ 📂 vendor for pagination
+ ┃ ┃ ┣ 📂 wishlist
  ┃ ┗ 📂 css
  ┣ 📂 routes
  ┃ ┗ 📜 web.php
@@ -140,8 +136,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 - [Laravel](https://laravel.com) - PHP Framework
 - [TailwindCSS](https://tailwindcss.com) - Utility-first CSS
 - [DaisyUI](https://daisyui.com) - Tailwind Components
-- [Alpine.js](https://alpinejs.dev) - JavaScript Framework
-
+- [Livewire](https://laravel-livewire.com) - Full-Stack Framework for Laravel
+- [SweetAlert2](https://sweetalert2.github.io/) - JavaScript Alert Library
 ## 💬 Support
 
 For support, email `support@example.com` or join our Slack channel.

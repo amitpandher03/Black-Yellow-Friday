@@ -144,10 +144,11 @@
                             
                             <div class="form-control mb-4">
                                 <div class="rating rating-lg">
-                                    @for($i = 5; $i >= 1; $i--)
+                                    @for($i = 1; $i <= 5; $i++)
                                         <input type="radio" name="rating" value="{{ $i }}" 
                                             class="mask mask-star-2 bg-primary" 
-                                            @checked($i == 5)/>
+                                            @checked(old('rating', 5) == $i)
+                                            required/>
                                     @endfor
                                 </div>
                                 @error('rating')
@@ -200,8 +201,11 @@
                                         <div class="flex items-center gap-2 mt-1">
                                             <div class="rating rating-sm">
                                                 @for($i = 1; $i <= 5; $i++)
-                                                    <input type="radio" class="mask mask-star-2 bg-primary" 
-                                                        @checked($i == $review->rating) disabled />
+                                                    <input type="radio" name="rating-{{ $review->id }}" 
+                                                        class="mask mask-star-2 bg-primary" 
+                                                        value="{{ $i }}"
+                                                        {{ $i <= $review->rating ? 'checked' : '' }} 
+                                                        disabled />
                                                 @endfor
                                             </div>
                                             <span class="text-xs text-gray-500">{{ $review->created_at->diffForHumans() }}</span>
