@@ -117,6 +117,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const now = new Date();
             const difference = targetDate - now;
 
+            // Check if countdown has ended
+            if (difference <= 0) {
+                countdownElements.forEach(span => {
+                    span.style.setProperty('--value', 0);
+                });
+                return;
+            }
+
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
@@ -135,7 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Update countdown immediately and then every second
         updateCountdown();
         setInterval(updateCountdown, 1000);
     }

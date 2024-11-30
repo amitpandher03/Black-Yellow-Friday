@@ -13,7 +13,8 @@
             {{-- Product Images - Enhanced card styling --}}
             <div class="space-y-6">
                 <div class="card h-full w-full bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
-                    @if(Storage::exists($product->image))
+                    
+                    @if($product->image && Storage::disk('public')->exists($product->image))
                         <img src="{{ Storage::url($product->image) }}" 
                             class="w-full h-full object-contain transform hover:scale-110 transition duration-700 ease-in-out" />
                     @else
@@ -33,7 +34,13 @@
                     <div class="flex items-center gap-4 text-gray-600">
                         <div class="avatar">
                             <div class="w-10 h-10 rounded-full ring-2 ring-primary ring-offset-base-100 ring-offset-2">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($product->user->name) }}" />
+                                @if($product->user->profile_picture && Storage::disk('public')->exists($product->user->profile_picture))
+                                    <img src="{{ Storage::url($product->user->profile_picture) }}" 
+                                        class="rounded-full w-full h-full object-cover" 
+                                        alt="{{ $product->user->name }}" />
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($product->user->name) }}" />
+                                @endif
                             </div>
                         </div>
                         <span class="font-semibold">{{ $product->user->name }}</span>

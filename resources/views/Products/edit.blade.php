@@ -3,8 +3,14 @@
         <div class="max-w-2xl mx-auto">
             {{-- Header --}}
             <div class="mb-6">
-                <h1 class="text-3xl font-bold">
-                    <span class="text-primary">Edit</span> Product
+                <div class="text-sm breadcrumbs mb-12">
+                    <ul class="flex items-center space-x-2">
+                        <li><a href="{{ route('products.index') }}" class="text-primary hover:text-primary-focus transition-colors duration-200">Products</a></li>
+                        <li class="flex items-center before:content-['/'] before:mx-2 before:text-gray-400">Edit {{ $product->name }}</li>
+                    </ul>
+                </div>
+                <h1 class="text-6xl font-bold text-base-content tracking-tight">
+                    Edit Product
                 </h1>
                 <p class="text-gray-400 mt-2">Update the product information.</p>
             </div>
@@ -42,6 +48,15 @@
                     <textarea name="description" class="textarea textarea-bordered h-24" required>{{ $product->description }}</textarea>
                 </div>
 
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text text-primary">Features</span>
+                    </label>
+                    <textarea name="features" 
+                              class="textarea textarea-bordered h-24" 
+                              placeholder="Enter features, one per line">{{ old('features', $product->features) }}</textarea>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="form-control">
                         <label class="label">
@@ -73,30 +88,30 @@
 
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text text-primary">Product Images</span>
+                        <span class="label-text text-primary">Product Image</span>
                     </label>
                     <input type="file" 
-                           name="images[]" 
-                           multiple 
+                           name="image" 
                            accept="image/*"
-                           class="file-input file-input-bordered w-full @error('images') file-input-error @enderror" />
-                    <div class="mt-2 grid grid-cols-3 gap-4">
-                        @foreach($product->images as $image)
-                            <div class="relative group">
-                                <img src="{{ Storage::url($image->path) }}" 
+                           class="file-input file-input-bordered w-full @error('image') file-input-error @enderror" />
+                    <div class="mt-2">
+                        @if($product->image && Storage::disk('public')->exists($product->image))
+                            <div class="relative group card bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
+                                <img src="{{ Storage::url($product->image) }}" 
                                      alt="Product Image" 
-                                     class="w-full h-32 object-cover rounded-lg" />
-                                {{-- Optional: Add delete image functionality --}}
-                                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 
-                                            transition-opacity flex items-center justify-center">
-                                    <button type="button" 
-                                            class="btn btn-sm btn-error"
-                                            onclick="deleteImage({{ $image->id }})">
-                                        Delete
-                                    </button>
-                                </div>
+                                     class="w-full h-64 object-cover transform hover:scale-110 transition duration-700 ease-in-out" />
                             </div>
-                        @endforeach
+                        @elseif($product->image)
+                            <div class="relative group card bg-base-100 shadow-2xl overflow-hidden rounded-3xl">
+                                <img src="{{ $product->image }}" 
+                                     alt="Product Image" 
+                                     class="w-full h-64 object-cover transform hover:scale-110 transition duration-700 ease-in-out" />
+                            </div>
+                        @else
+                            <div class="text-center py-8 bg-base-200 rounded-xl">
+                                <p class="text-gray-500">No image uploaded yet</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -161,40 +176,3 @@
     </div>
 </x-app-layout>
 
-{{-- Optional: Add JavaScript for image deletion --}}
-<script>
-function deleteImage(imageId) {
-    if (confirm('Are you sure you want to delete this image?')) {
-        // Add AJAX call to delete image
-        fetch(`/product-images/${imageId}`, {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json',
-            }
-        }).then(response => {
-            if (response.ok) {
-                // Refresh the page or remove the image element
-                location.reload();
-            }
-        });
-    }
-}
-
-// Optional: Add live calculation of discounted price
-document.addEventListener('DOMContentLoaded', function() {
-    const priceInput = document.querySelector('input[name="price"]');
-    const discountInput = document.querySelector('input[name="discount_percentage"]');
-    const discountedPriceInput = document.getElementById('discounted_price');
-
-    function calculateDiscountedPrice() {
-        const price = parseFloat(priceInput.value) || 0;
-        const discount = parseFloat(discountInput.value) || 0;
-        const discountedPrice = price - (price * discount / 100);
-        discountedPriceInput.value = discountedPrice.toFixed(2);
-    }
-
-    priceInput.addEventListener('input', calculateDiscountedPrice);
-    discountInput.addEventListener('input', calculateDiscountedPrice);
-});
-</script>

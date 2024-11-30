@@ -2,12 +2,14 @@
     @foreach ($products as $product)
     <div class="card bg-base-100 shadow-xl hover:shadow-2xl hover:bg-primary/20 transition-shadow duration-300 border border-primary/20 h-full">
         <figure class="relative px-4 pt-4">
-            @if(Storage::exists($product->image))
+        @if($product->image && Storage::disk('public')->exists($product->image))
                 <img src="{{ Storage::url($product->image) }}" 
-                    class="w-24 h-24 object-cover rounded-xl" />
+                     class="rounded-xl w-full h-48 object-cover" 
+                     alt="{{ $product->name }}" />
             @else
-                <img src="{{  $product->image  }}" 
-                    class="rounded-xl w-full h-48 object-cover" />
+                <img src="{{ $product->image }}"  
+                     class="rounded-xl w-full h-48 object-cover" 
+                     alt="{{ $product->name }}" />
             @endif
             {{-- Category Badge --}}
             <div class="absolute top-6 right-6">

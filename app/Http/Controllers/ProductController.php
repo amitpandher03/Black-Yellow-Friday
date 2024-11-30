@@ -6,30 +6,34 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller 
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
+        // Sanitize search input
+        $search = strip_tags($request->search);
+        $category = filter_var($request->category, FILTER_VALIDATE_INT);
+        
         $query = Product::with(['category', 'user']);
         
-        // Category Filter
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+        if ($category) {
+            $query->where('category_id', $category);
         }
 
-        // Search
-        if ($request->filled('search')) {
-            $query->where(function($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('description', 'like', "%{$request->search}%");
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        // Sorting
+        // Sorting logic
         switch ($request->sort) {
             case 'price_asc':
                 $query->orderBy('price', 'asc');
@@ -40,11 +44,16 @@ class ProductController extends Controller
             case 'name_asc':
                 $query->orderBy('name', 'asc');
                 break;
-            default:
+            case 'newest':
                 $query->latest();
+                break;
+            default:
+                $query->latest(); 
         }
 
-        $products = $query->paginate(9);
+        // Use a constant for pagination
+        $perPage = config('app.pagination.products', 9);
+        $products = $query->paginate($perPage)->withQueryString();
         $categories = Category::all();
 
         return view('products.index', compact('products', 'categories'));
@@ -66,33 +75,48 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'description' => 'required|string|max:1000',
+            'price' => 'required|numeric|min:0|max:999999.99',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => [
+                'required',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:2048',
+                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000'
+            ],
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'is_featured' => 'nullable|boolean'
         ]);
 
-        // Calculate discounted price if discount percentage is provided
-        if (!empty($validated['discount_percentage'])) {
-            $validated['discounted_price'] = $validated['price'] * (1 - $validated['discount_percentage'] / 100);
+        try {
+            \DB::beginTransaction();
+
+            if ($request->hasFile('image')) {
+                $validated['image'] = $request->file('image')->store('products', 'public');
+            }
+
+            // Calculate discounted price
+            $validated['discounted_price'] = !empty($validated['discount_percentage']) 
+                ? $validated['price'] * (1 - $validated['discount_percentage'] / 100)
+                : $validated['price'];
+
+            $validated['stock'] = 100; 
+            $validated['user_id'] = auth()->id();
+
+            $product = Product::create($validated);
+
+            \DB::commit();
+            return redirect()->route('products.index')
+                ->with('success', 'Product created successfully');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            // Log the error
+            \Log::error('Product creation failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to create product. Please try again.')
+                ->withInput();
         }
-
-        // Handle single image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
-        }
-
-        // Set default stock value
-        $validated['stock'] = 100; 
-
-        $product = Product::create($validated);
-        $product->user_id = Auth::id();
-        $product->save();
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product created successfully');
     }
 
     /**
@@ -120,25 +144,55 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        // Authorization check
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,gif',
+                'max:2048',
+                'dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000'
+            ],
+            'description' => 'required|string|max:1000',
+            'price' => 'required|numeric|min:0|max:999999.99',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
-            'discounted_price' => 'nullable|numeric|min:0',
         ]);
 
-        // Handle single image upload
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('products', 'public');
+        try {
+            \DB::beginTransaction();
+
+            if ($request->hasFile('image')) {
+                // Delete old image
+                if ($product->image) {
+                    Storage::disk('public')->delete($product->image);
+                }
+                $validated['image'] = $request->file('image')->store('products', 'public');
+            }
+
+            // Calculate discounted price
+            if (isset($validated['discount_percentage'])) {
+                $validated['discounted_price'] = $validated['price'] * 
+                    (1 - $validated['discount_percentage'] / 100);
+            }
+
+            $product->update($validated);
+
+            \DB::commit();
+            return redirect()->route('products.index')
+                ->with('success', 'Product updated successfully');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Product update failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to update product. Please try again.')
+                ->withInput();
         }
-
-        $product->update($validated);
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully');
     }
 
     /**
@@ -146,10 +200,28 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        if ($product->user_id !== auth()->user()->id) {
-            return redirect()->route('products.index');
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
         }
-        $product->delete();
-        return redirect()->route('products.index');
+
+        try {
+            \DB::beginTransaction();
+
+            // Delete associated image
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $product->delete();
+
+            \DB::commit();
+            return redirect()->route('products.index')
+                ->with('success', 'Product deleted successfully');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Product deletion failed: ' . $e->getMessage());
+            return back()->with('error', 'Failed to delete product. Please try again.');
+        }
     }
 }
