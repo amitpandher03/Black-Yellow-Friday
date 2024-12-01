@@ -1,39 +1,46 @@
-# Black Friday E-commerce Application
+# Black & Yellow Friday E-commerce Application
 
 A modern e-commerce platform built with Laravel, featuring a sleek black and yellow theme, designed specifically for Black Friday sales and special promotions.
-
 
 ## ✨ Features
 
 ### 👤 User Features
-- Browse products with dynamic filtering 🛍️
-- Search functionality 🔍
+- User authentication and authorization 🔐
+- Browse products with dynamic filtering and search 🔍
 - Shopping cart management 🛒
-- User authentication 👤
-- Responsive design 📱
+- Wishlist functionality ❤️
 - Product ratings and reviews ⭐
-- Secure checkout process 💳
-- Email notifications 📧
+- Responsive design for all devices 📱
+- Email notifications for password reset 📧
+- Profile management with avatar upload 👤
+
+### 🛍️ Product Features
+- Dynamic product listing with pagination
+- Category-based filtering
+- Price sorting (high to low, low to high)
+- Discounted prices calculation
+- Product image management
+- Stock tracking
 
 ## 🚀 Tech Stack
 
-- **Framework:** Laravel 10.x
+- **Backend:** Laravel 10.x
 - **Frontend:** 
-  - 🎨 Blade Templates
-  - 💅 TailwindCSS
-  - 🎯 DaisyUI
-  - ⚡ SweetAlert2
-- **Authentication:** 🔐 Laravel Fortify
-- **Database:** 📦 MySQL
-- **File Storage:** 💾 Laravel Storage
-- **Payment Processing:** 💳 Stripe (coming soon)
+  - Blade Templates
+  - TailwindCSS
+  - DaisyUI Components
+  - Alpine.js
+- **Authentication:** Laravel Fortify
+- **Database:** MySQL
+- **File Storage:** Laravel Storage
+- **Real-time Updates:** Livewire
 
 ## 🛠️ Installation
 
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/blackfriday-app.git
+git clone https://github.com/amitpandey-github/blackfriday-app.git
 ```
 
 2. Install dependencies
@@ -43,110 +50,99 @@ composer install
 npm install
 ```
 
-3. Create environment file
+3. Configure environment
 
 ```bash
 cp .env.example .env
-```
-
-4. Generate application key
-
-```bash
 php artisan key:generate
 ```
 
+4. Configure database in `.env`
 
-5. Configure database in `.env` file
-
-
-```bash
+```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=blackfriday
+DB_DATABASE=black_and_yellow_friday
 DB_USERNAME=root
-DB_PASSWORD=
+DB_PASSWORD=root
 ```
 
-6. Run migrations
+5. Configure mail settings in `.env`
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="your-email@gmail.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+6. Run migrations and seeders
 
 ```bash
 php artisan migrate
-```
-
-7. Seed the database
-
-```bash
 php artisan db:seed
 ```
 
-
-8. Run the server
+7. Start the development server
 
 ```bash
 php artisan serve
+npm run dev
 ```
 
-
-## 📁 Directory Structure
+## 📁 Project Structure
 
 ```
-📦 blackfriday-app
+📦 black-and-yellow-friday
  ┣ 📂 app
  ┃ ┣ 📂 Http
- ┃ ┃ ┣ 📂 Controllers
- ┃ ┃ ┗ 📂 Middleware
- ┃ ┗ 📂 Models
+ ┃ ┃ ┣ 📂 Controllers   # Application controllers
+ ┃ ┃ ┣ 📂 Livewire      # Livewire components
+ ┃ ┃ ┗ 📂 Middleware    # Custom middleware
+ ┃ ┣ 📂 Models          # Eloquent models
+ ┃ ┗ 📂 Actions         # Fortify actions
  ┣ 📂 resources
  ┃ ┣ 📂 views
- ┃ ┃ ┣ 📂 cart
- ┃ ┃ ┣ 📂 components
- ┃ ┃ ┣ 📂 deals
- ┃ ┃ ┣ 📂 livewire
- ┃ ┃ ┣ 📂 products
- ┃ ┃ ┣ 📂 profile
- ┃ ┃ ┣ 📂 vendor for pagination
- ┃ ┃ ┣ 📂 wishlist
- ┃ ┗ 📂 css
- ┣ 📂 routes
- ┃ ┗ 📜 web.php
- ┗ 📂 public
+ ┃ ┃ ┣ 📂 auth          # Authentication views
+ ┃ ┃ ┣ 📂 cart          # Shopping cart views
+ ┃ ┃ ┣ 📂 components    # Blade components
+ ┃ ┃ ┣ 📂 layouts       # Layout templates
+ ┃ ┃ ┣ 📂 products      # Product views
+ ┃ ┃ ┗ 📂 profile       # User profile views
+ ┗ 📂 public            # Public assets
 ```
 
+## 🔑 Key Features Implementation
 
+- **Authentication:** Using Laravel Fortify for secure user authentication
+- **File Upload:** Handling profile pictures and product images
+- **Shopping Cart:** Real-time cart updates with Livewire
+- **Product Management:** CRUD operations with image handling
+- **User Profiles:** Custom profile management with avatar support
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 🔒 Security
-
-If you discover any security-related issues, please email `security@example.com` instead of using the issue tracker.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
-## 🙏 Acknowledgments
+## 📧 Contact
 
-- [Laravel](https://laravel.com) - PHP Framework
-- [TailwindCSS](https://tailwindcss.com) - Utility-first CSS
-- [DaisyUI](https://daisyui.com) - Tailwind Components
-- [Livewire](https://laravel-livewire.com) - Full-Stack Framework for Laravel
-- [SweetAlert2](https://sweetalert2.github.io/) - JavaScript Alert Library
-## 💬 Support
-
-For support, email `support@example.com` or join our Slack channel.
+- **Email:** pandheramit245@gmail.com
+- **GitHub:** [@amitpandher03](https://github.com/amitpandher03)
 
 ---
 
 <div align="center">
-  Made with ❤️ by <strong>Amit</strong><br>
-  <sup>© 2024 Black Friday E-commerce. All rights reserved.</sup>
+  Made with ❤️ by <strong>Amit Pandher</strong><br>
+  <sup>© 2024 Black & Yellow Friday. All rights reserved.</sup>
 </div>
 
 
