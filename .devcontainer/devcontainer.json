@@ -1,0 +1,7 @@
+{
+    "name": "MySQL Development Environment",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "db",
+    "workspaceFolder": "/workspace",
+    "postCreateCommand": "echo 'MySQL setup complete'"
+  }
